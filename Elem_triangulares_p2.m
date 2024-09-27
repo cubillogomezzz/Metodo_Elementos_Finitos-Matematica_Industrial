@@ -4,7 +4,7 @@
 
 f = @(x,y) sin(pi*x).*sin(pi*y) ;
 
-X = [0.32; 0.74]; % Punto de estudio 
+X = [0.6; 0.24]; % Punto de estudio 
 
 
 X1 = [0.25;0.5]; % Vértices del elemento
@@ -40,3 +40,5 @@ interpol = f1*phi1(xg,yg) + f2*phi2(xg,yg) + f3*phi3(xg,yg) + f4*phi4(xg,yg) + f
 %(hacer más elegante con for si procede)
 
 reales = f(X(1),X(2))
+
+error = abs(interpol-reales)
