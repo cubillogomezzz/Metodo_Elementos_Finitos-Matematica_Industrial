@@ -1,5 +1,5 @@
 % Resolución numérica problema elíptico en 1D con condiciones dirichlet 
-% homogéneas mediante elementos finitos lineales 
+% homogéneas mediante elementos finitos cuadráticos 
 
 % Parámetros del problema a*u - k*u''=f
 f = @(x) 0*x+1;
@@ -11,10 +11,10 @@ c=0;
 d=1;
 
 Ne = 10; % Número de elementos
-h = (d-c)/Ne;
+h = 0.5*(d-c)/Ne;
 xi = c:h:d;
 
-ensamblaje_mat_masrig_1d_lin
+run('C:\Users\Restart\Desktop\Recursos GITI\Materiales cuarto GITI\Elementos finitos\Versiones base\PEFs Elipticos\Eliptico_1d_cuad_marco\ensamblaje_mat_masrig_1d_cuad.m')
 A = a*M + k*R; % Sistema "característico" de los problemas elípticos dirch. hom.
 
 % Construcción A0 
