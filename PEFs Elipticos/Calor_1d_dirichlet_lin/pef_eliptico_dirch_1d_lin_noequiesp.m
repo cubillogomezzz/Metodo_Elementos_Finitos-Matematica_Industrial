@@ -4,17 +4,22 @@
 % Parámetros del problema a*u - k*u''=f
 f = @(x) 0*x+1;
 a=1; %Termino de reaccion. a<0 -> exotermica
-k=0.01;
+k=0.0001;
 
 % Intervalo
 c=0;
 d=1;
 
-Ne = 100; % Número de elementos
+Ne = 20; % Número de elementos
 h = (d-c)/Ne;
-xi = c:h:d;
+hfino = 0.0001;
+u = 0.1;
+xi1 = c:hfino:u;
+xi2 = (u+h):h:d;
+xi = [xi1 xi2];
+Ne = length(xi)-1;
 
-ensamblaje_mat_masrig_1d_lin
+ensamblaje_mat_masrig_1d_lin % recibe Ne y xi, cuidado si mallado no equiespaciado
 A = a*M + k*R; % Sistema "característico" de los problemas elípticos dirch. hom.
 
 % Construcción A0 

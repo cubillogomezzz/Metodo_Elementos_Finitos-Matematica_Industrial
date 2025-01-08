@@ -55,7 +55,7 @@ end
       ui = h0(xi,yi)';
       vi = j0(xi,yi)';  
 
-      ai = M\(M*fi-c_cuad*R*ui); %(R sin imponerle condiciones, ya lo hace ui)
+      ai = M\(M*fi-c_cuad*R*ui-2*k*M*vi); %(R sin imponerle condiciones, ya lo hace ui)
 
       figure(1)
       trisurf(elem,xi,yi,ui)

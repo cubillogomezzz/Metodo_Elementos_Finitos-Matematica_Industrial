@@ -5,7 +5,11 @@
 
 f = @(x,y) sin(pi*x).*sin(pi*y) ;
 
-[xg,yg]=meshgrid(-1:0.2:1,-1:0.2:1);% Punto de estudio 
+% Coordenadas dato en elemento de referencia
+
+%[xg,yg]=meshgrid(-1:0.2:1,-1:0.2:1); % Mallado
+xg = ; % Un solo punto
+yg = ;
 
 X1 = [0 0.6 0.5 0;0 0 0.5 0.3]; % Nodos del elemento, entrada
 X2 = [0.6 1 1 0.5;0 0 0.4 0.5];
@@ -73,4 +77,3 @@ for j=1:4
     surf(xg_trans,yg_trans,interpol)
 
 end    
-    

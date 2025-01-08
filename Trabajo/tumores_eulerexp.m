@@ -47,7 +47,7 @@ uhi = [T0; N0]; %uhi_0
     N=0;
     for i=1:length(t) 
     
-    n1=t(1,i);
+    n1=t(1,i); %indices de los nodos que forman triangulo
     n2=t(2,i);
     n3=t(3,i);
 

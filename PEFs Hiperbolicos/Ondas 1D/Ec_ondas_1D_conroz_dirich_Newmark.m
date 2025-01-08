@@ -60,7 +60,7 @@ A0(end,end)=1;
       ui = h0(xi)';
       vi = j0(xi)';  
 
-      ai = M\(M*fi-c_cuad*R*ui); %(R sin imponerle condiciones, ya lo hace ui)
+      ai = M\(M*fi-c_cuad*R*ui-2*k*M*vi); %(R sin imponerle condiciones, ya lo hace ui)
 
       figure(1)
       plot(xi,ui)
