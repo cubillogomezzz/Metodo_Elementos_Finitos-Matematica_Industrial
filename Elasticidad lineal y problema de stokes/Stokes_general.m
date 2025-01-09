@@ -3,6 +3,8 @@
 % Para satisfacer condicion Inf-Sup de existencia y unicidad, Vh cuadrático
 % para velocidad, lineal para presión. 
 
+nu = 1;
+rho = 1;
 
 f1 = @(x,y) 0*x; 
 f2 = @(x,y) 0*x;
@@ -60,7 +62,8 @@ fron_d = setdiff(fron_tot,fron_n);
 fron_d = [fron_d fron_d+length(xi)];
 
 
-A = [R 0*R -Cxl; 0*R R -Cyl; Cxl' Cyl' zeros(size(Cxl,2))]; 
+%A = [nu*R 0*R -Cxl; 0*R nu*R -Cyl; Cxl' Cyl' zeros(size(Cxl,2))]; 
+A = [nu*R 0*R -(1/rho)*Cxl; 0*R nu*R -(1/rho)*Cyl; Cxl' Cyl' zeros(size(Cxl,2))];
 
 A0 = A;
 A0(fron_d,:)=0;
