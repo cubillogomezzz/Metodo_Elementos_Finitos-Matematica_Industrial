@@ -28,6 +28,7 @@ kt = 1;
 alpha_tn = 1.0e-4;   %[1/día]
 alpha_nt = 1.0e-1;   %[1/día]
 
+
 % Variables para integracion num cantidad total
 T = 0;
 N = 0;
@@ -35,7 +36,7 @@ N = 0;
 %parametros en el tiempo
 dt = 0.01;
 t0 = 0;
-tf = 3;
+tf = 10;
 Nt = (tf - t0) / dt;
 
 %para el mallado usamos pdetool
@@ -91,25 +92,28 @@ figure(1)
 % % colorbar
 % % caxis([-0.1 0.1])
 % axis([-1 1 -1 1 0 1])
+figure(1)
 subplot(2, 1, 1)
 trisurf(elem,xi,yi,Thn)
 axis([-1 1 -1 1 0 1])
 title(['cantidad total tumorales = ', num2str(T)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
-figure(1)
 subplot(2, 1, 2)
 trisurf(elem,xi,yi,Nhn)
 axis([-1 1 -1 1 0 1])
 title(['cantidad total normales = ', num2str(N)]);
 %title(['cantidad total N = ', num2str(N)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
-pause(1e-10)
+
+sgtitle('Euler explícito, t = 0');
+
+pause
 maximos = zeros(1,tf);
 for n = 1:Nt
     vect_b_t = ((1+dt*at)*M - dt*Dt*R)*Thn -dt*at/kt*M*z_thn - dt*alpha_tn*M*whn;
@@ -157,7 +161,7 @@ for n = 1:Nt
         axis([-1 1 -1 1 0 1])
         title(['cantidad total tumorales = ', num2str(T)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
         figure(1)
@@ -166,7 +170,7 @@ for n = 1:Nt
         axis([-1 1 -1 1 0 1])
         title(['cantidad total normales = ', num2str(N)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
         
@@ -211,11 +215,6 @@ hold on
 
 load('mallado_tumor.mat')
 
-%parametros en el tiempo
-dt = 0.01;
-t0 = 0;
-tf = 3;
-Nt = (tf - t0) / dt;
 
 %para el mallado usamos pdetool
 %load('mallado_tumor.mat')
@@ -242,7 +241,7 @@ axis([-1 1 -1 1 0 1])
 title('Densidad de células tumorales')
 %title(['cantidad total T = ', num2str(T)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
 figure(1)
@@ -252,10 +251,10 @@ axis([-1 1 -1 1 0 1])
 title('Densidad de células normales')
 %title(['cantidad total N = ', num2str(N)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
-pause(1e-10)
+pause
 maximos = zeros(1,tf);
 for n = 1:Nt
     vect_k_t = ((1+0.5*dt*at)*M - 0.5*dt*Dt*R)*Thn -0.5*dt*at/kt*M*z_thn - 0.5*dt*alpha_tn*M*whn;
@@ -281,28 +280,59 @@ for n = 1:Nt
     maximos(n) = max(Thn);
 
     if mod(n,10) == 0
+
+        T = 0;
+        N = 0;
+
+               for j=1:length(t) 
+                    
+                    n1=t(1,j);
+                    n2=t(2,j);
+                    n3=t(3,j);
+                
+                    Atra=[p(1,n2)-p(1,n1) p(1,n3)-p(1,n1);p(2,n2)-p(2,n1) p(2,n3)-p(2,n1)];
+                    F = @(x,y) Atra*[x;y]+[p(1,n1);p(1,n1)];
+                    
+                    w1=0.5*(1/3);
+                    w2=w1;
+                    w3=w1;
+                    
+                    p1 = F(0,0);
+                    p2 = F(1,0);
+                    p3 = F(0,1);
+                    
+                    T=T+det(Atra)*(w1*Thn(n1)+w2*Thn(n2)+w3*Thn(n3)); 
+                    N=N+det(Atra)*(w1*Nhn(n1)+w2*Nhn(n2)+w3*Nhn(n3)); 
+                    
+               end                    
+
         figure(1)
         subplot(2, 1, 1)
         trisurf(elem,xi,yi,Thn)
         axis([-1 1 -1 1 0 1])
-        title('Densidad de células tumorales')
-        %title(['cantidad total T = ', num2str(T)]);
+        title(['cantidad total tumorales = ', num2str(T)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
-        figure(1)
         subplot(2, 1, 2)
         trisurf(elem,xi,yi,Nhn)
         axis([-1 1 -1 1 0 1])
-        title('Densidad de células normales')
-        %title(['cantidad total N = ', num2str(N)]);
+        title(['cantidad total normales = ', num2str(N)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
         
-        sgtitle(['Euler mejorado t = ',num2str(n*dt)]);
+        sgtitle(['Euler mejorado, t = ',num2str(n*dt)]);
+%         figure(1)
+%         trisurf(elem,xi,yi,Thn)
+%         title('EULER EXPLÍCITO EN 2 DIMENSIONES',n*dt)
+%     %     view(2)
+%     %     shading interp
+%     %     colorbar
+%     %     caxis([-0.1 0.1])
+%         axis([-1 1 -1 1 0 1])
         pause(1e-10)
     end
 end
@@ -330,11 +360,6 @@ hold on
 % idem para N_n+1
 
 
-%intervalo
-dt=0.01;
-t0=0;
-tf=3;
-Nt=(tf-t0)/dt;
 
 xi=p(1,:);
 yi=p(2,:);
@@ -367,20 +392,19 @@ axis([-1 1 -1 1 0 1])
 title('Densidad de células tumorales')
 %title(['cantidad total T = ', num2str(T)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
-figure(1)
 subplot(2, 1, 2)
 trisurf(elem,xi,yi,Nhn)
 axis([-1 1 -1 1 0 1])
 title('Densidad de células normales')
 %title(['cantidad total N = ', num2str(N)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
-pause(1e-10)
+pause
 
 %valores en tiempo n-1
 Thnn=Thn;
@@ -402,27 +426,26 @@ z_nhn = Nhn.^2;
 
 maximos(1) = max(Thn);
 
-figure(1)
-subplot(2, 1, 1)
-trisurf(elem,xi,yi,Thn)
-axis([-1 1 -1 1 0 1])
-title('Densidad de células tumorales')
-%title(['cantidad total T = ', num2str(T)]);
-%view(2)
-%shading interp
-colorbar
-caxis([0 1])
-figure(1)
-subplot(2, 1, 2)
-trisurf(elem,xi,yi,Nhn)
-axis([-1 1 -1 1 0 1])
-title('Densidad de células normales')
-%title(['cantidad total N = ', num2str(N)]);
-%view(2)
-%shading interp
-colorbar
-caxis([0 1])
-pause(1e-10)
+% figure(1)
+% subplot(2, 1, 1)
+% trisurf(elem,xi,yi,Thn)
+% axis([-1 1 -1 1 0 1])
+% title('Densidad de células tumorales')
+% %title(['cantidad total T = ', num2str(T)]);
+% %view(2)
+% %shading interp
+% colorbar
+% caxis([0 1])
+% subplot(2, 1, 2)
+% trisurf(elem,xi,yi,Nhn)
+% axis([-1 1 -1 1 0 1])
+% title('Densidad de células normales')
+% %title(['cantidad total N = ', num2str(N)]);
+% %view(2)
+% %shading interp
+% colorbar
+% caxis([0 1])
+% pause
 
 %ahora es con el laplaciano implícito
 for n=2:Nt
@@ -442,28 +465,59 @@ for n=2:Nt
     maximos(n) = max(Thn);
 
     if mod(n,10) == 0
+
+        T = 0;
+        N = 0;
+
+               for j=1:length(t) 
+                    
+                    n1=t(1,j);
+                    n2=t(2,j);
+                    n3=t(3,j);
+                
+                    Atra=[p(1,n2)-p(1,n1) p(1,n3)-p(1,n1);p(2,n2)-p(2,n1) p(2,n3)-p(2,n1)];
+                    F = @(x,y) Atra*[x;y]+[p(1,n1);p(1,n1)];
+                    
+                    w1=0.5*(1/3);
+                    w2=w1;
+                    w3=w1;
+                    
+                    p1 = F(0,0);
+                    p2 = F(1,0);
+                    p3 = F(0,1);
+                    
+                    T=T+det(Atra)*(w1*Thn(n1)+w2*Thn(n2)+w3*Thn(n3)); 
+                    N=N+det(Atra)*(w1*Nhn(n1)+w2*Nhn(n2)+w3*Nhn(n3)); 
+                    
+               end                    
+
         figure(1)
         subplot(2, 1, 1)
         trisurf(elem,xi,yi,Thn)
         axis([-1 1 -1 1 0 1])
-        title('Densidad de células tumorales')
-        %title(['cantidad total T = ', num2str(T)]);
+        title(['cantidad total tumorales = ', num2str(T)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
-        figure(1)
         subplot(2, 1, 2)
         trisurf(elem,xi,yi,Nhn)
         axis([-1 1 -1 1 0 1])
-        title('Densidad de células normales')
-        %title(['cantidad total N = ', num2str(N)]);
+        title(['cantidad total normales = ', num2str(N)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
         
-        sgtitle(['Laplaciano implícito, t = ',num2str(n*dt)]);
+        sgtitle(['Laplaciano implicito, t = ',num2str(n*dt)]);
+%         figure(1)
+%         trisurf(elem,xi,yi,Thn)
+%         title('EULER EXPLÍCITO EN 2 DIMENSIONES',n*dt)
+%     %     view(2)
+%     %     shading interp
+%     %     colorbar
+%     %     caxis([-0.1 0.1])
+%         axis([-1 1 -1 1 0 1])
         pause(1e-10)
     end
 end
@@ -486,21 +540,6 @@ hold on
 
 load('mallado_tumor.mat')
 
-%parametros de la EDP
-an = 5;   %[1/día]
-at = 0;    %[1/día]
-Dn = 2.0e-15;   %[cm^2/día]
-Dt = 4.2e-3;    %[cm^2/día]
-kn = 1; %capacidad carga del medio
-kt = 1;
-alpha_tn = 1.0e-4;   %[1/día]
-alpha_nt = 0.2;   %[1/día]
-
-%parametros en el tiempo
-dt = 0.05;
-t0 = 0;
-tf = 10;
-Nt = (tf - t0) / dt;
 
 %parametros de newton-raphson
 N_newton = 10000;
@@ -524,12 +563,12 @@ JF = @(X) [(1-0.5*dt*at)*M+0.5*dt*Dt*R,0*M,0.5*dt*at/kt*M,0*M,0.5*dt*alpha_tn*M;
     0*M,(1-0.5*dt*an)*M+0.5*dt*Dn*R,0*M,0.5*dt*an/kn*M,0.5*dt*alpha_nt*M;...
     -2*diag(X(1:Nn)),0*M,I,0*M,0*M;...
     0*M,-2*diag(X(Nn+1:2*Nn)),0*M,I,0*M;...
-    -diag(X(Nn+1:2*Nn)),-diag(X(1:Nn)),0*M,0*M,I];
+    -diag(X(Nn+1:2*Nn)),-diag(X(1:Nn)),0*M,0*M,I]; 
 
 %condiciones iniciales de las variables
 T0 = @(x,y) exp(-(x.^2+y.^2)*10);
 Thn = T0(xi,yi)';
-Nhn = 1 - T0(xi,yi)';
+Nhn = 1 + 0*xi';
 whn = Thn .* Nhn;
 z_thn = Thn.^2;
 z_nhn = Nhn.^2;
@@ -540,7 +579,7 @@ axis([-1 1 -1 1 0 1])
 title('Densidad de células tumorales')
 %title(['cantidad total T = ', num2str(T)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
 figure(1)
@@ -550,11 +589,11 @@ axis([-1 1 -1 1 0 1])
 title('Densidad de células normales')
 %title(['cantidad total N = ', num2str(N)]);
 %view(2)
-%shading interp
+shading interp
 colorbar
 caxis([0 1])
-pause(1e-10)
-maximos = zeros(1,tf);
+pause
+%maximos = zeros(1,tf);
 Xn = [Thn;Nhn;z_thn;z_nhn;whn];
 for n = 1:Nt
     F = @(X) [M*((1-0.5*dt*at)*X(1:Nn)+0.5*dt*at/kt*X(2*Nn+1:3*Nn)+0.5*dt*alpha_tn*X(4*Nn+1:5*Nn))+R*X(1:Nn)*0.5*dt*Dt-M*((1+0.5*dt*at)*Thn-0.5*dt*at/kt*z_thn-0.5*dt*alpha_tn*whn)-R*Thn*0.5*dt*Dt;...
@@ -577,29 +616,60 @@ for n = 1:Nt
 
     maximos(n) = max(Thn);
 
-    if mod(n,1) == 0
+    if mod(n,10) == 0
+
+        T = 0;
+        N = 0;
+
+               for j=1:length(t) 
+                    
+                    n1=t(1,j);
+                    n2=t(2,j);
+                    n3=t(3,j);
+                
+                    Atra=[p(1,n2)-p(1,n1) p(1,n3)-p(1,n1);p(2,n2)-p(2,n1) p(2,n3)-p(2,n1)];
+                    F = @(x,y) Atra*[x;y]+[p(1,n1);p(1,n1)];
+                    
+                    w1=0.5*(1/3);
+                    w2=w1;
+                    w3=w1;
+                    
+                    p1 = F(0,0);
+                    p2 = F(1,0);
+                    p3 = F(0,1);
+                    
+                    T=T+det(Atra)*(w1*Thn(n1)+w2*Thn(n2)+w3*Thn(n3)); 
+                    N=N+det(Atra)*(w1*Nhn(n1)+w2*Nhn(n2)+w3*Nhn(n3)); 
+                    
+               end                    
+
         figure(1)
         subplot(2, 1, 1)
         trisurf(elem,xi,yi,Thn)
         axis([-1 1 -1 1 0 1])
-        title('Densidad de células tumorales')
-        %title(['cantidad total T = ', num2str(T)]);
+        title(['cantidad total tumorales = ', num2str(T)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
-        figure(1)
         subplot(2, 1, 2)
         trisurf(elem,xi,yi,Nhn)
         axis([-1 1 -1 1 0 1])
-        title('Densidad de células normales')
-        %title(['cantidad total N = ', num2str(N)]);
+        title(['cantidad total normales = ', num2str(N)]);
         %view(2)
-        %shading interp
+        shading interp
         colorbar
         caxis([0 1])
         
-        sgtitle(['EULER EXPLÍCITO, t = ',num2str(n*dt)]);
+        sgtitle(['Crank Nicolson t = ',num2str(n*dt)]);
+%         figure(1)
+%         trisurf(elem,xi,yi,Thn)
+%         title('EULER EXPLÍCITO EN 2 DIMENSIONES',n*dt)
+%     %     view(2)
+%     %     shading interp
+%     %     colorbar
+%     %     caxis([-0.1 0.1])
+%         axis([-1 1 -1 1 0 1])
         pause(1e-10)
     end
 end

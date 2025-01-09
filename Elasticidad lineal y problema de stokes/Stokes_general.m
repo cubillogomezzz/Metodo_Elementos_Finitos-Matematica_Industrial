@@ -48,6 +48,13 @@ fron_d1 = find(xi == -1);
 fron_n = find(xi == 9);
 fron_d = setdiff(fron_tot,fron_n);
 
+%     Comprobación frontera
+%     figure
+%     hold on
+%     scatter(xi(fron_tot),yi(fron_tot),'b')
+%     scatter(xi(fron_d),yi(fron_d),'r','.')
+%     hold off
+
 % fron_d = setdiff(fron_tot,fron_n)'; %transponer aqui importante
 
 fron_d = [fron_d fron_d+length(xi)];

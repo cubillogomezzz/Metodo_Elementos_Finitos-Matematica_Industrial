@@ -69,7 +69,7 @@ for n = 1:Nt
     vect_b = 0.5*dt*M*(fi+fi_m1) + (1-dt*0.5*a)*M*uhn - 0.5*dt*k*R*uhn ...
      - A*gi ; % Vector de carga característico del problema %Antes teniamos otra vaina con 1-a
 
-    vect_b(fron_tot) = 0;
+    vect_b(fron_d) = 0;
 
     whn = A0\vect_b;  
     uhn = whn + gi; 

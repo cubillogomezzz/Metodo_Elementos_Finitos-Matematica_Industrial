@@ -18,6 +18,13 @@ fron_d2 = find(yi == -1);
 fron_d3 = find((xi == 1));
 fron_d = [fron_d1 fron_d2 fron_d3];
 
+%     Comprobación frontera
+%     figure
+%     hold on
+%     scatter(xi(fron_tot),yi(fron_tot),'b')
+%     scatter(xi(fron_d),yi(fron_d),'r','.')
+%     hold off
+
 
 [R11 M] = assema(p,t,[1 0 0 0]',1,0);
 [R21 M] = assema(p,t,[0 1 0 0]',1,0);
@@ -25,16 +32,18 @@ fron_d = [fron_d1 fron_d2 fron_d3];
 [R22 M] = assema(p,t,[0 0 0 1]',1,0);
 
 E = 2.7e8;
-mu = 0.2;
-lambda = E*mu/((1+mu)*(1-2*mu));
-nu = E/(2*(1+mu));
+nu = 0.2; % dato nu, se calcula mu, al reves
+
+lambda = E*nu/((1+nu)*(1-2*nu));
+mu = E/(2*(1+nu));
+
 g = 0;
 rho = 1000;
 
-A11 = (lambda +2 *nu)*R11 + nu*R22;
-A12 = lambda*R21 + nu*R12;
-A21 = lambda*R12 + nu*R21;
-A22 = (lambda +2 *nu)*R22 + nu*R11;
+A11 = (lambda +2 *mu)*R11 + mu*R22;
+A12 = lambda*R21 + mu*R12;
+A21 = lambda*R12 + mu*R21;
+A22 = (lambda +2 *mu)*R22 + mu*R11;
 
 A = [A11 A12; A21 A22];
 

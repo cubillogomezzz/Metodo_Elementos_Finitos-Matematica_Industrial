@@ -28,8 +28,11 @@ fron_tot = unique([e(1,:) e(2,:)]);
 t0=0;
 tf=2.1;
 
-Ne_t = 10000;
-dt = (tf-t0)/Ne_t;
+dt = 0.001;
+Ne_t = (tf-t0)/dt;
+
+% Ne_t = 10000;
+% dt = (tf-t0)/Ne_t;
 
 % Ensamblaje matrices
 [R, M]=assema(p,t,1,1,0);
